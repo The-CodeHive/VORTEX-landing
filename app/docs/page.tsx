@@ -8,12 +8,33 @@ import Footer from '@/components/Footer';
 
 export default function DocsPage() {
   const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/docs')
-      .then(res => res.json())
-      .then(data => setContent(data.content))
-      .catch(err => console.error('Failed to load docs:', err));
+    const loadDocs = async () => {
+      try {
+        const res = await fetch('/api/docs');
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load documentation');
+        }
+
+        if (!data.content) {
+          throw new Error('Documentation content is empty');
+        }
+
+        setContent(data.content);
+      } catch (err) {
+        console.error('Failed to load docs:', err);
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDocs();
   }, []);
 
   return (
@@ -54,7 +75,15 @@ export default function DocsPage() {
             </div>
             
             <div className="p-8 lg:p-12">
-              {content ? (
+              {loading ? (
+                <div className="text-center text-text-muted">
+                  <div className="animate-pulse font-mono text-sm">Loading documentation...</div>
+                </div>
+              ) : error ? (
+                <div className="text-center text-red-300 font-mono text-sm">
+                  Failed to load docs: {error}
+                </div>
+              ) : (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -145,10 +174,6 @@ export default function DocsPage() {
                 >
                   {content}
                 </ReactMarkdown>
-              ) : (
-                <div className="text-center text-text-muted">
-                  <div className="animate-pulse font-mono text-sm">Loading documentation...</div>
-                </div>
               )}
             </div>
           </div>
