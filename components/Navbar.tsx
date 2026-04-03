@@ -30,7 +30,7 @@ export default function Navbar() {
           {["Features", "Tools", "Install"].map((item) => (
             <a
               key={item}
-              href={`#${item.toLowerCase()}`}
+              href={`/#${item.toLowerCase()}`}
               className="hover:text-cyan transition-colors duration-200"
             >
               {item}

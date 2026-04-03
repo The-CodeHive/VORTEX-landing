@@ -14,35 +14,35 @@ export default function Footer() {
         <div className="relative max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 font-mono text-xs text-green-term border border-green-term/30 bg-green-term/5 px-3 py-1.5 rounded mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-green-term animate-pulse" />
-            READY TO RUN
+            ART-FORWARD AI PAIR PROGRAMMER
           </div>
 
           <h2 className="font-display font-black text-6xl text-text-primary mb-6 leading-none">
-            Start building.{" "}
+            Ship faster.{" "}
             <span className="glow-cyan" style={{ color: "#00e5ff" }}>
-              Locally.
+              Your way.
             </span>
           </h2>
 
           <p className="text-text-secondary text-lg mb-10 max-w-lg mx-auto">
-            Your code. Your machine. Your model. VORTEX stays out of the cloud
-            and in your terminal where it belongs.
+            OpenAI-compatible brain. Aurora TUI skin. Live tools. Workspace-aware memory. 
+            Actually helps you ship.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <a
+              href="#install"
+              className="font-mono text-sm text-void bg-cyan px-8 py-3 rounded hover:shadow-[0_0_40px_rgba(0,229,255,0.5)] transition-all duration-200"
+            >
+              $ pipx install vortex-agent-cli
+            </a>
+            <a
               target="_blank"
               rel="noopener noreferrer"
               href="https://github.com/jagdep-singh/VORTEX"
-              className="font-mono text-sm text-void bg-cyan px-8 py-3 rounded hover:shadow-[0_0_40px_rgba(0,229,255,0.5)] transition-all duration-200"
-            >
-              View on GitHub →
-            </a>
-            <a
-              href="#install"
               className="font-mono text-sm text-cyan border border-cyan/30 px-8 py-3 rounded hover:bg-cyan/10 hover:border-cyan/60 transition-all duration-200"
             >
-              Installation guide
+              GitHub →
             </a>
           </div>
         </div>
@@ -57,22 +57,37 @@ export default function Footer() {
               VORTEX
             </span>
             <span className="font-mono text-xs text-text-muted ml-4">
-              MIT License
+              MIT License · Open Source
             </span>
           </div>
 
           <div className="font-mono text-xs text-text-muted">
-            Built for devs who live in the terminal.
+            Terminal AI pair programmer for the way you work.
           </div>
 
           <div className="flex items-center gap-6 font-mono text-xs text-text-muted">
-            <a href="#" className="hover:text-cyan transition-colors">
+            <a 
+              href="https://github.com/jagdep-singh/VORTEX"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-cyan transition-colors"
+            >
               GitHub
             </a>
-            <a href="#" className="hover:text-cyan transition-colors">
+            <a 
+              href="https://github.com/jagdep-singh/VORTEX/wiki"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-cyan transition-colors"
+            >
               Docs
             </a>
-            <a href="#" className="hover:text-cyan transition-colors">
+            <a 
+              href="https://github.com/jagdep-singh/VORTEX/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-cyan transition-colors"
+            >
               Issues
             </a>
           </div>

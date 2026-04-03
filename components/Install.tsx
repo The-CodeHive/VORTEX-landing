@@ -1,58 +1,73 @@
 const STEPS = [
   {
     num: "01",
-    title: "Install VORTEX",
-    code: `# Recommended: pipx for isolated CLI apps
+    title: "Install",
+    code: `# Best: pipx for isolated CLI
 pipx install vortex-agent-cli
 
-# Or install globally
-pip install vortex-agent-cli
+# Local checkout
+python3 -m pip install . --no-build-isolation
 
-# Or from source
-python3 -m pip install . --no-build-isolation`,
+# One-shot dev env
+./scripts/install.sh`,
   },
   {
     num: "02",
-    title: "Set your API key",
-    code: `# .env
-API_KEY=your_api_key_here
-BASE_URL=https://api.openai.com/v1
+    title: "Run",
+    code: `# Interactive
+vortex
 
-# Or configure model profiles in .ai-agent/config.toml`,
-  },
-  {
-    num: "03",
-    title: "Run VORTEX",
-    code: `vortex
-
-# Interactive mode (default)
+# Single prompt
 vortex "write a hello world program in c"
 
-# With custom working directory
+# Choose project up front
 vortex --cwd /path/to/project`,
   },
   {
+    num: "03",
+    title: "Configure",
+    code: `# .ai-agent/config.toml
+active_model_profile = "openrouter"
+
+[models.openrouter]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+
+[models.openrouter.model]
+name = "openrouter/free"
+temperature = 0
+max_output_tokens = 8192`,
+  },
+  {
     num: "04",
-    title: "Or use Docker",
+    title: "Docker",
     code: `docker run --rm -it \\
   --env-file .env \\
   -v "$PWD":/workspace \\
   -v vortex-data:/data \\
-  vortex`,
+  vortex
+
+# With custom project
+docker run --rm -it \\
+  -v /path/project:/workspace \\
+  vortex --cwd /workspace/subdir`,
   },
 ];
 
 const COMMANDS = [
-  { cmd: "/help", desc: "List all commands" },
-  { cmd: "/cwd <path>", desc: "Switch working directory" },
-  { cmd: "/model <name>", desc: "Switch model / provider" },
-  { cmd: "/models refresh", desc: "Probe catalog & update status" },
-  { cmd: "/approval <mode>", desc: "Set approval policy" },
-  { cmd: "/checkpoint", desc: "Save named checkpoint" },
+  { cmd: "/models [refresh]", desc: "List or probe models for all profiles" },
+  { cmd: "/model <name|number>", desc: "Switch profile or pick discovered model" },
+  { cmd: "/config", desc: "Show resolved settings" },
+  { cmd: "/api-change", desc: "Re-enter provider URL and API key" },
+  { cmd: "/scan and /index", desc: "Refresh workspace snapshot and symbol index" },
+  { cmd: "/save", desc: "Save current session" },
+  { cmd: "/sessions", desc: "List saved sessions" },
   { cmd: "/resume <id>", desc: "Resume a saved session" },
-  { cmd: "/tools", desc: "List registered tools" },
-  { cmd: "/mcp", desc: "List connected MCP servers" },
-  { cmd: "/stats", desc: "Usage stats for current session" },
+  { cmd: "/checkpoint", desc: "Create named checkpoint" },
+  { cmd: "/restore <id>", desc: "Restore from checkpoint" },
+  { cmd: "/tools", desc: "Inspect registered tools" },
+  { cmd: "/mcp", desc: "Inspect MCP servers" },
+  { cmd: "/help", desc: "Full command reference" },
 ];
 
 export default function Install() {
@@ -62,12 +77,12 @@ export default function Install() {
         <div className="flex items-center gap-4 mb-4">
           <div className="h-px w-12 bg-cyan/40" />
           <span className="font-mono text-xs text-cyan tracking-widest">
-            QUICK START
+            GET STARTED
           </span>
         </div>
         <h2 className="font-display font-black text-5xl text-text-primary mb-16 max-w-xl leading-tight">
-          Up and running{" "}
-          <span style={{ color: "#00e5ff" }}>in four steps.</span>
+          Install, configure, run.{" "}
+          <span style={{ color: "#00e5ff" }}>Four simple steps.</span>
         </h2>
 
         <div className="grid lg:grid-cols-2 gap-16">
@@ -104,7 +119,7 @@ export default function Install() {
           {/* Commands reference */}
           <div>
             <div className="font-display font-bold text-xl text-text-primary mb-6">
-              Interactive Commands
+              Core Commands
             </div>
             <div className="panel rounded-lg overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-void-2">
@@ -113,14 +128,16 @@ export default function Install() {
                   vortex · commands
                 </span>
               </div>
-              <div className="divide-y divide-border">
+              <div className="divide-y divide-border max-h-96 overflow-y-auto">
                 {COMMANDS.map((c) => (
                   <div
                     key={c.cmd}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-cyan/5 transition-colors duration-150"
+                    className="flex items-start justify-between px-4 py-3 hover:bg-cyan/5 transition-colors duration-150 gap-4"
                   >
-                    <code className="font-mono text-sm text-cyan">{c.cmd}</code>
-                    <span className="font-body text-xs text-text-muted ml-4">
+                    <code className="font-mono text-xs text-cyan flex-shrink-0 whitespace-nowrap">
+                      {c.cmd}
+                    </code>
+                    <span className="font-body text-xs text-text-muted text-right">
                       {c.desc}
                     </span>
                   </div>
@@ -128,29 +145,27 @@ export default function Install() {
               </div>
             </div>
 
-            {/* Approval modes box */}
+            {/* Update & features box */}
             <div className="panel rounded-lg p-6 mt-6">
               <div className="font-display font-semibold text-text-primary mb-4">
-                Approval Modes
+                Update & More
               </div>
-              <div className="space-y-2">
-                {[
-                  ["on-request", "Pause before every mutating action"],
-                  ["on-failure", "Pause only when actions fail"],
-                  ["auto", "Approve most actions automatically"],
-                  ["auto-edit", "Auto-approve file edits specifically"],
-                  ["never", "Never pause, always proceed"],
-                  ["yolo", "Full auto — no guardrails"],
-                ].map(([mode, desc]) => (
-                  <div key={mode} className="flex items-center gap-3">
-                    <code className="font-mono text-xs text-amber-term w-28 flex-shrink-0">
-                      {mode}
-                    </code>
-                    <span className="font-body text-xs text-text-muted">
-                      {desc}
-                    </span>
-                  </div>
-                ))}
+              <div className="space-y-3 text-sm">
+                <div>
+                  <div className="text-cyan font-mono text-xs mb-1">Update</div>
+                  <p className="text-text-muted">
+                    Standard: <code className="text-green-term">vortex --update</code>
+                  </p>
+                  <p className="text-text-muted text-xs mt-1">
+                    Local: pull git instead
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-border">
+                  <div className="text-cyan font-mono text-xs mb-1">Inside App</div>
+                  <p className="text-text-muted text-xs">
+                    Use <code className="text-green-term">/cwd</code> to switch projects and rebuild context
+                  </p>
+                </div>
               </div>
             </div>
           </div>
