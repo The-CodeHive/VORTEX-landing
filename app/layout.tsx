@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "VORTEX",
   description:
     "A local terminal coding agent built around an OpenAI-compatible chat API, a Rich-based TUI, and a powerful tool system.",
+  icons: {
+    icon: "/VORTEX.png",
+  },
 };
 
 export default function RootLayout({
