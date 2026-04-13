@@ -6,7 +6,16 @@ export const metadata: Metadata = {
   description:
     "A local terminal coding agent built around an OpenAI-compatible chat API, a Rich-based TUI, and a powerful tool system.",
   icons: {
-    icon: "/VORTEX.png",
+    icon: [
+      {
+        url: "/vortex-light.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/vortex-dark.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
   },
 };
 
